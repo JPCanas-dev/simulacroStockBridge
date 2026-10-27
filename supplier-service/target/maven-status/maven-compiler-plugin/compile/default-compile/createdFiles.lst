@@ -1,0 +1,5 @@
+com\stockBridge\supplier\service\SupplierSimulatorService.class
+com\stockBridge\supplier\dto\AvailabilityCheckResponse.class
+com\stockBridge\supplier\SupplierServiceApplication.class
+com\stockBridge\supplier\controller\SupplierAvailabilityController.class
+com\stockBridge\supplier\dto\AvailabilityCheckRequest.class

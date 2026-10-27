@@ -1,0 +1,237 @@
+﻿{
+	"info": {
+		"name": "StockBridge API - Simulacro M6",
+		"description": "Colección completa para pruebas funcionales, seguridad JWT, roles y casos de negocio.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Autenticación",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"jwt_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": "http://localhost:8080/api/auth/login"
+					}
+				},
+				{
+					"name": "Login Bodeguero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"jwt_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"bodeguero\",\n  \"password\": \"bodega123\"\n}"
+						},
+						"url": "http://localhost:8080/api/auth/login"
+					}
+				},
+				{
+					"name": "Login Empleado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"jwt_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"empleado1\",\n  \"password\": \"empleado123\"\n}"
+						},
+						"url": "http://localhost:8080/api/auth/login"
+					}
+				},
+				{
+					"name": "Registrar Usuario Nuevo",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"nuevo_empleado\",\n  \"password\": \"password123\",\n  \"role\": \"ROLE_EMPLEADO\"\n}"
+						},
+						"url": "http://localhost:8080/api/auth/register"
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Productos",
+			"item": [
+				{
+					"name": "Listar Productos Paginados y Ordenados",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/products/page?page=0&size=5&sortBy=price&sortDir=desc"
+					}
+				},
+				{
+					"name": "Listar Productos Bajo Stock",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/products/low-stock?minStock=5"
+					}
+				},
+				{
+					"name": "Crear Producto (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{jwt_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": \"TECL-001\",\n  \"name\": \"Teclado Mecanico RGB\",\n  \"description\": \"Switches Cherry MX Red\",\n  \"category\": \"ACCESORIOS\",\n  \"price\": 120.00,\n  \"stock\": 20\n}"
+						},
+						"url": "http://localhost:8080/api/products"
+					}
+				},
+				{
+					"name": "Activar o Desactivar Producto",
+					"request": {
+						"method": "PATCH",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/products/1/toggle-active"
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Solicitudes",
+			"item": [
+				{
+					"name": "Crear Solicitud (Empleado)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{jwt_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productId\": 1,\n  \"quantity\": 2,\n  \"observation\": \"Monitores para soporte técnico\"\n}"
+						},
+						"url": "http://localhost:8080/api/requests"
+					}
+				},
+				{
+					"name": "Listar Solicitudes",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/requests"
+					}
+				},
+				{
+					"name": "Aprobar Solicitud (BODEGA/ADMIN)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/requests/1/approve"
+					}
+				},
+				{
+					"name": "Entregar Solicitud (Descuenta Stock)",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/requests/1/deliver"
+					}
+				},
+				{
+					"name": "Rechazar Solicitud",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{jwt_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"No hay justificación operativa para el pedido\"\n}"
+						},
+						"url": "http://localhost:8080/api/requests/1/reject"
+					}
+				},
+				{
+					"name": "Cancelar Solicitud Propia",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/requests/1/cancel"
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Movimientos y Proveedores",
+			"item": [
+				{
+					"name": "Listar Movimientos de Inventario",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Authorization", "value": "Bearer {{jwt_token}}"}],
+						"url": "http://localhost:8080/api/movements?productId=1"
+					}
+				},
+				{
+					"name": "Consultar Disponibilidad Externa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{jwt_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"productCode\": \"MON-001\",\n  \"quantity\": 10,\n  \"category\": \"MONITORES\"\n}"
+						},
+						"url": "http://localhost:8080/api/suppliers/check-availability"
+					}
+				}
+			]
+		}
+	]
+}
